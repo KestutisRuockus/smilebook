@@ -9,8 +9,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#7cade6",
+        secondary: "#bef285",
+        textLight: "#B8B8B8",
+        textDark: "#333333",
+        errorColor: "#db3939",
+        successColor: "#4CAF50",
+        hoverLight: "#F8E71C",
+        hoverDark: "#357ABD",
+        borderColor: "#E4E4E4",
+        shadowColor: "#D1D1D1",
+        info: "#2196F3",
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
