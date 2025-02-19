@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,48 +8,50 @@ datasource db {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique
-  password         String
-  role             String   @default("client") // Default role is 'client'
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  role         String        @default("client") // Default role is 'client'
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  appointments Appointment[]
+  Profile      Profile?
 }
 
 model Profile {
-  id               Int      @id @default(autoincrement())
-  user_id          Int      @unique
-  full_name        String   // Full name for user profile (required)
-  phone_number     String   // Phone number for user profile (required)
-  address          String   // Address for user profile (required)
-  birthdate        DateTime // Birthdate for user profile (required)
-  allergies        String?  // Allergies for user profile (optional)
-  profile_picture  String?  // Profile picture (optional)
-  user             User     @relation(fields: [user_id], references: [id])  // Link to User
+  id              Int      @id @default(autoincrement())
+  user_id         Int      @unique
+  full_name       String // Full name for user profile (required)
+  phone_number    String // Phone number for user profile (required)
+  address         String // Address for user profile (required)
+  birthdate       DateTime // Birthdate for user profile (required)
+  allergies       String? // Allergies for user profile (optional)
+  profile_picture String? // Profile picture (optional)
+  user            User     @relation(fields: [user_id], references: [id]) // Link to User
 }
 
 model Doctor {
-  id               Int      @id @default(autoincrement())  // Primary key for the doctor
-  full_name        String   // Full name of the doctor
-  specialty        String   // Doctor's specialty (e.g., general practitioner, dentist)
-  license_number   String   @unique // Unique license number (optional)
-  profile_picture  String?  // Optional profile picture
-  bio              String?  // Optional bio/description
-  rating           Float?   // Optional rating
-  created_at       DateTime @default(now())  // Record creation date
-  updated_at       DateTime @updatedAt // Record update date
-  appointments     Appointment[]  // Relation to the Appointment model
+  id              Int           @id @default(autoincrement()) // Primary key for the doctor
+  full_name       String // Full name of the doctor
+  specialty       String // Doctor's specialty (e.g., general practitioner, dentist)
+  license_number  String        @unique // Unique license number (optional)
+  profile_picture String? // Optional profile picture
+  bio             String? // Optional bio/description
+  rating          Float? // Optional rating
+  created_at      DateTime      @default(now()) // Record creation date
+  updated_at      DateTime      @updatedAt // Record update date
+  appointments    Appointment[] // Relation to the Appointment model
 }
 
 model Appointment {
-  id               Int      @id @default(autoincrement())  // Unique ID for the appointment
-  user_id          Int      // Foreign key linking to the User model (patient)
-  doctor_id        Int      // Foreign key linking to the Doctor model
+  id               Int      @id @default(autoincrement()) // Unique ID for the appointment
+  user_id          Int // Foreign key linking to the User model (patient)
+  doctor_id        Int // Foreign key linking to the Doctor model
   appointment_time DateTime // The time and date of the appointment
-  status           String   // Status of the appointment (e.g., booked, completed, canceled)
+  status           String // Status of the appointment (e.g., booked, completed, canceled)
   created_at       DateTime @default(now()) // Record creation date
   updated_at       DateTime @updatedAt // Record update date
 
-  user             User     @relation(fields: [user_id], references: [id])  // Relation to User model
-  doctor           Doctor   @relation(fields: [doctor_id], references: [id]) // Relation to Doctor model
+  user   User   @relation(fields: [user_id], references: [id]) // Relation to User model
+  doctor Doctor @relation(fields: [doctor_id], references: [id]) // Relation to Doctor model
 }
