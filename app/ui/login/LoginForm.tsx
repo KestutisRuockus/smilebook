@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "../components/Button";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -19,9 +20,7 @@ const LoginForm = () => {
     console.log("login btn");
   };
 
-  const handleRegisterButton = () => {
-    console.log("register btn");
-  };
+  const handleRegisterButton = () => {};
 
   return (
     <div className="lg:w-1/2 sm:w-4/5 w-11/12 rounded-md border-2 border-borderColor">
@@ -60,11 +59,13 @@ const LoginForm = () => {
             fn={handleLoginButton}
             bgColor="bg-bgSecondary"
           />
-          <Button
-            text="Register"
-            fn={handleRegisterButton}
-            bgColor="bg-bgLight"
-          />
+          <Link href="/register" className="w-full">
+            <Button
+              text="Register"
+              fn={handleRegisterButton}
+              bgColor="bg-bgLight"
+            />
+          </Link>
         </div>
       </form>
     </div>

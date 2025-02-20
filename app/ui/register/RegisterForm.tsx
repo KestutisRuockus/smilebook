@@ -4,6 +4,8 @@ import { useState } from "react";
 import Button from "../components/Button";
 import logo from "../../../public/images/logo.png";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +13,9 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -25,12 +30,70 @@ const RegisterForm = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const handleRegisterButton = () => {
-    console.log(email, password, confirmPassword);
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/;
+    const passwordPattern =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/;
+    const isEmailValid = emailPattern.test(email);
+    const isPasswordMathcing = password === confirmPassword;
+    const isPasswordValid = passwordPattern.test(password);
+
+    setErrorMessage("");
+
+    if (email.trim() === "") {
+      setErrorMessage("Email cannot be empty.");
+      return;
+    } else if (!isEmailValid) {
+      setErrorMessage("Invalid email format. example@email.com");
+      return;
+    } else if (password.trim() === "") {
+      setErrorMessage("Password cannot be empty.");
+      return;
+    } else if (!isPasswordValid) {
+      setErrorMessage(
+        "Password must be at least 8 characters, include 1 uppercase letter, 1 number, and 1 special character."
+      );
+      return;
+    } else if (confirmPassword.trim() === "") {
+      setErrorMessage("Confirm Password cannot be empty.");
+      return;
+    } else if (!isPasswordMathcing) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    } else {
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          router.push("/dashboard");
+        } else {
+          setErrorMessage(data.message || "Registration failed");
+        }
+      } catch (error) {
+        setErrorMessage("Failed to register user");
+        console.log(error);
+      }
+    }
+  };
+
+  const handleBackToLoginPageButton = () => {
+    router.push("/login");
   };
 
   return (
-    <form className="2xl:w-2/5 lg:w-3/5 sm:w-4/5 w-11/12 bg-bgPrimary mx-auto mt-20 sm:pt-20 pt-32 pb-20  rounded-md overflow-hidden relative">
+    <form
+      onSubmit={handleRegister}
+      className="2xl:w-2/5 lg:w-3/5 sm:w-4/5 w-11/12 bg-bgPrimary mx-auto mt-20 sm:pt-20 pt-32 pb-20  rounded-md overflow-hidden relative"
+    >
       <Image
         src={logo}
         alt="logo"
@@ -101,23 +164,34 @@ const RegisterForm = () => {
             />
             <div className="flex items-center gap-1">
               <input
-                id="showPassword"
+                id="showPasswordCheckbox"
                 type="checkbox"
                 onChange={() => setShowConfirmPassword(!showConfirmmPassword)}
               />
-              <label htmlFor="showPassword" className="text-xs text-textDark">
+              <label
+                htmlFor="showPasswordCheckbox"
+                className="text-xs text-textDark"
+              >
                 {showConfirmmPassword ? "Hide" : "Show"} Confirm Password
               </label>
             </div>
           </div>
         </div>
+        {errorMessage && (
+          <div className="text-center text-errorColor font-semibold">
+            {errorMessage}
+          </div>
+        )}
       </div>
-      <div className="mx-auto w-fit">
-        <Button
-          text="Register"
-          fn={handleRegisterButton}
-          bgColor="bg-bgSecondary"
-        />
+      <div className="flex flex-wrap gap-2 w-3/5 mx-auto">
+        <Button type="submit" text="Register" bgColor="bg-bgSecondary" />
+        <Link href="/" className="w-full">
+          <Button
+            text="Back to Login"
+            fn={handleBackToLoginPageButton}
+            bgColor="bg-bgLight"
+          />
+        </Link>
       </div>
     </form>
   );
