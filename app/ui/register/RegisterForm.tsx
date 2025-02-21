@@ -74,7 +74,7 @@ const RegisterForm = () => {
 
         const data = await res.json();
         if (res.ok) {
-          router.push("/dashboard");
+          router.push("/register");
         } else {
           setErrorMessage(data.message || "Registration failed");
         }
@@ -129,7 +129,7 @@ const RegisterForm = () => {
               value={password}
               onChange={handlePasswordInput}
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your email..."
+              placeholder="Enter your password..."
               required
               className="text-textDark pl-1 rounded-md outline-none"
             />
@@ -158,7 +158,7 @@ const RegisterForm = () => {
               value={confirmPassword}
               onChange={handleConfirmPasswrodInput}
               type={showConfirmmPassword ? "text" : "password"}
-              placeholder="Enter your email..."
+              placeholder="Enter your password..."
               required
               className="text-textDark pl-1 rounded-md outline-none"
             />
